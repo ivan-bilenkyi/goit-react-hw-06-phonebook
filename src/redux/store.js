@@ -2,11 +2,6 @@ import { devToolsEnhancer } from '@redux-devtools/extension';
 import { combineReducers, createStore } from 'redux';
 import { contactReducer } from './contactSlice';
 
-const initialState = {
-  contacts: [],
-  filter: '',
-};
-
 const rootReducer = combineReducers({
   contacts: contactReducer,
   //   locale: localeReducer,
