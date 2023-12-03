@@ -1,6 +1,6 @@
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addContact } from '../../redux/contactSlice';
 import { AiOutlineUserAdd } from 'react-icons/ai';
 
@@ -19,6 +19,18 @@ const SignupSchema = Yup.object().shape({
 
 export const PhonebookForm = () => {
   const dispatch = useDispatch();
+  const contacts = useSelector(state => state.contacts);
+  const checkNewContact = NewContact => {
+    const duplicate = contacts.some(
+      contact =>
+        contact.name.toLowerCase().trim() ===
+        NewContact.name.toLowerCase().trim()
+    );
+    if (duplicate) {
+      return alert(`${NewContact.name} is already in contacts`);
+    }
+    dispatch(addContact(NewContact));
+  };
   return (
     <div>
       <h1>Phonebook</h1>
@@ -29,7 +41,7 @@ export const PhonebookForm = () => {
         }}
         validationSchema={SignupSchema}
         onSubmit={(values, actions) => {
-          dispatch(addContact(values));
+          checkNewContact(values);
           actions.resetForm();
         }}
       >

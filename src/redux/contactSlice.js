@@ -1,53 +1,35 @@
+import { createSlice } from '@reduxjs/toolkit';
 import { nanoid } from 'nanoid';
 
-const initialState = [
-  {
-    id: nanoid(),
-    name: 'Rosie Simpson',
-    number: '459-12-56',
+const contactSlice = createSlice({
+  name: 'contacts',
+  initialState: [
+    { id: nanoid(), name: 'Rosie Simpson', number: '459-12-56' },
+    { id: nanoid(), name: 'John Smith', number: '123-45-678' },
+    { id: nanoid(), name: 'Emily Johnson', number: '987-65-432' },
+  ],
+  reducers: {
+    addContact: {
+      reducer(state, action) {
+        state.push(action.payload);
+      },
+      prepare(payload) {
+        return {
+          payload: {
+            id: nanoid(),
+            ...payload,
+          },
+        };
+      },
+    },
+    removeContact: {
+      reducer(state, action) {
+        const contactIdToRemove = action.payload;
+        return state.filter(item => item.id !== contactIdToRemove);
+      },
+    },
   },
-];
-export const contactReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case 'contact/newContact': {
-      const isDuplicate = state.some(contact => {
-        return (
-          contact.name.toLowerCase().trim() ===
-          action.payload.name.toLowerCase().trim()
-        );
-      });
-
-      if (isDuplicate) {
-        alert(`${action.payload.name} is already in contacts`);
-        return state;
-      }
-
-      return [...state, action.payload];
-    }
-    case 'contact/removeContact': {
-      const contactIdToRemove = action.payload;
-      return state.filter(item => item.id !== contactIdToRemove);
-    }
-    default:
-      return state;
-  }
-};
-
-export const addContact = newContact => {
-  const contact = {
-    ...newContact,
-    id: nanoid(),
-  };
-
-  return {
-    type: 'contact/newContact',
-    payload: contact,
-  };
-};
-
-export const removeContact = value => {
-  return {
-    type: 'contact/removeContact',
-    payload: value,
-  };
-};
+});
+export const getPhoneBookValue = state => state.phoneBook.contacts;
+export const contactReducer = contactSlice.reducer;
+export const { addContact, removeContact } = contactSlice.actions;
